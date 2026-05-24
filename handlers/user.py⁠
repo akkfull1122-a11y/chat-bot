@@ -1,0 +1,23 @@
+from aiogram import Router
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import CommandStart
+from keyboards.inline import main_menu_kb
+from aiogram.fsm.context import FSMContext
+
+router = Router()
+
+@router.message(CommandStart())
+async def start_cmd(message: Message, state: FSMContext):
+    await state.clear()
+    welcome_text = (
+        "🤖 **AI Assistant** tizimiga xush kelibsiz!\n\n"
+        "Men sizning shaxsiy yordamchingizman. "
+        "Maxfiy va xavfsiz muloqot tarmog'idan foydalanish uchun quyidagi menyudan tanlang."
+    )
+    await message.answer(welcome_text, reply_markup=main_menu_kb(), parse_mode="Markdown")
+
+@router.callback_query(lambda c: c.data == "new_chat")
+async def start_new_chat(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("🔍 Suhbatdosh qidirilmoqda... Iltimos kuting.")
+    # Queue system mantig'i: 
+    # Boshqa "waiting" statusidagi foydalanuvchini topish va session yaratish.
